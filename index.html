@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ayanokoji-themed — Are we trustworthy?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f0f12;
+      --card:#111117;
+      --muted:#9aa0a6;
+      --accent:#7b5cff; /* purple Ayanokoji vibe */
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial, sans-serif;background:linear-gradient(180deg,#0b0b0d 0%, #111015 60%);color:#e6e6e9}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+    .card{width:940px;max-width:96vw;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:22px;box-shadow:0 8px 30px rgba(0,0,0,0.6);display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:start}
+    .avatar{height:180px;width:180px;border-radius:12px;overflow:hidden;flex-shrink:0;background:var(--glass);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.03)}
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .header{display:flex;flex-direction:column;gap:6px}
+    h1{margin:0;font-size:20px;font-weight:800;letter-spacing:0.2px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .dialog{margin-top:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .text-line{font-size:15px;line-height:1.45;margin:8px 0;opacity:0;transform:translateY(6px);transition:all 320ms cubic-bezier(.2,.9,.3,1)}
+    .text-line.visible{opacity:1;transform:translateY(0)}
+    .controls{display:flex;gap:10px;margin-top:12px}
+    button.btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:10px;color:#eaeaea;font-weight:600;cursor:pointer}
+    button.btn.primary{background:linear-gradient(90deg,var(--accent), #a085ff);border:none;color:#0b0b0d}
+    button.btn.ghost{background:transparent;border:1px dashed rgba(255,255,255,0.04)}
+    .foot{margin-top:14px;color:var(--muted);font-size:13px}
+    .log{margin-top:14px;font-family:monospace;font-size:13px;color:var(--muted);white-space:pre-wrap}
+    @media (max-width:740px){.card{grid-template-columns:1fr;gap:12px}.avatar{height:140px;width:140px;margin:auto}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="card" aria-live="polite">
+    <div>
+      <div class="avatar" title="Ayanokoji PFP">
+        <img id="pfp" src="/mnt/data/IMG_20250921_175148_043.webp" alt="ayanokoji pfp" />
+      </div>
+    </div>
+
+    <div>
+      <div class="header">
+        <h1>What do you think, Harshit — are we all trustworthy?</h1>
+        <p class="lead">Choose an answer below. The replies will unfold in an Ayanokoji-style cold logic — concise, unsettling, precise.</p>
+      </div>
+
+      <div class="dialog" id="dialog">
+        <div class="text-line visible" id="start">You arrive quietly. The question is simple. The answer will change how the trap reveals itself.</div>
+
+        <!-- dynamic lines inserted here -->
+      </div>
+
+      <div class="controls" id="controls">
+        <button class="btn primary" id="yesBtn">Yes</button>
+        <button class="btn" id="noBtn">No</button>
+      </div>
+
+      <div class="foot">Tip: This is a single-file page — you can host it on Netlify, Vercel, GitHub Pages or open locally.</div>
+
+      <div class="log" id="log" aria-hidden="true"></div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+  // Simple state machine for branching dialogue. Ayanokoji-style replies: calm, observing, manipulative logic.
+  const dialog = document.getElementById('dialog');
+  const controls = document.getElementById('controls');
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const log = document.getElementById('log');
+
+  function addLine(text, delay=0){
+    const el = document.createElement('div');
+    el.className = 'text-line';
+    el.textContent = text;
+    dialog.appendChild(el);
+    // small timeout for transition
+    setTimeout(()=> el.classList.add('visible'), 60 + delay);
+    return el;
+  }
+
+  function clearControls(){controls.innerHTML = '';}
+  function setControls(html){controls.innerHTML = html}
+
+  // helper to create button markup and attach handler
+  function addControlButton(label, cls, onClick){
+    const b = document.createElement('button');
+    b.className = 'btn ' + (cls||'');
+    b.textContent = label;
+    b.onclick = onClick;
+    controls.appendChild(b);
+    return b;
+  }
+
+  yesBtn.onclick = ()=> handleYes();
+  noBtn.onclick = ()=> handleNo();
+
+  function handleYes(){
+    // remove existing controls to avoid double clicks
+    clearControls();
+    addLine('You clicked "Yes."', 20);
+    setTimeout(()=> addLine('But in reality, you showed something else. I trusted you and you broke it.', 120), 500);
+    setTimeout(()=> addLine('You thought your plan worked — to snatch the girls I used — but in the end you fall, because you acted like I planned.', 120), 1100);
+
+    setTimeout(()=>{
+      // present two buttons: But? and How...?
+      setControls('');
+      addControlButton('But?', 'ghost', ()=>{
+        addLine('You asked: "But?"', 40);
+        setTimeout(()=> addLine('Because you underestimated how quiet and patient I had to be. I needed a reason to break — that was the plan.', 120), 380);
+        setTimeout(()=> addLine('I used the same pattern before: Jose, Muskan. The method is identical. You gave me the reason; I executed.', 120), 980);
+        setTimeout(()=>{
+          clearControls();
+          addControlButton('You deserve it.', 'primary', ()=>{
+            addLine('You deserve what you could not foresee: the role you were assigned in my design.', 40);
+            finishReveal();
+          });
+        }, 1600);
+      });
+
+      addControlButton('How...?', 'ghost', ()=>{
+        addLine('You asked: "How...?"', 40);
+        setTimeout(()=> addLine('I had already stopped girls from replying to you — not because I wanted to, but because I needed your plan to continue.', 120), 340);
+        setTimeout(()=> addLine('Your plan was to snatch. My plan was to break. Both served a single outcome: I control the story.', 120), 940);
+        setTimeout(()=>{
+          clearControls();
+          addControlButton('Explain', 'primary', ()=>{
+            addLine('The owner behind Manshi’s account is me. Everything you believed was evidence of you — but the evidence was planted.', 40);
+            finishReveal();
+          });
+        }, 1600);
+      });
+    }, 1800);
+  }
+
+  function handleNo(){
+    clearControls();
+    addLine('You clicked "No."', 20);
+    setTimeout(()=> addLine('So you think none is trustworthy. Yet, you made a mistake — you still trusted the pattern would repeat every time I get a relationship.', 120), 600);
+    setTimeout(()=>{
+      clearControls();
+      addControlButton('Yes', 'primary', ()=>{
+        addLine('You confirmed: that you expected me to be snatched again.', 40);
+        setTimeout(()=> addLine('The truth: I set a trap. Manshi means nothing to you, nothing to me — except as a prop. I am the owner behind the account.', 120), 400);
+        setTimeout(()=> addLine('Now you are at Kushida-level: flattered, naive, and defeated. You fell into the trap by moving predictably.', 120), 1000);
+        setTimeout(()=>{
+          finishReveal();
+        }, 1600);
+      });
+    }, 1000);
+  }
+
+  function finishReveal(){
+    addLine('\nFinal note: Actions are data. People are variables. Mistakes are predictable.', 40);
+    addLine('End of level. You played the expected role. — A.', 80);
+    clearControls();
+    // small transcript log for download or copy
+    setTimeout(()=>{
+      const lines = Array.from(document.querySelectorAll('.text-line')).map(n=>n.textContent).join('\n');
+      log.textContent = 'TRANSCRIPT:\n'+lines;
+      // show two final buttons: copy transcript, restart
+      addControlButton('Copy transcript', '', ()=>{
+        navigator.clipboard.writeText(log.textContent).then(()=>{
+          addLine('Transcript copied to clipboard.');
+        }).catch(()=> addLine('Unable to copy.')); 
+      });
+      addControlButton('Restart', 'ghost', ()=> location.reload());
+    }, 900);
+  }
+
+  // small progressive reveal for initial lines
+  document.addEventListener('DOMContentLoaded', ()=>{
+    // make sure the initial line is visible already
+  });
+</script>
+</body>
+</html>
